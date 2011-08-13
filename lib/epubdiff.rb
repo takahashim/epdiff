@@ -47,9 +47,9 @@ module Epubdiff
       FileUtils.mkdir_p(tmpdir+"/file1")
       FileUtils.mkdir_p(tmpdir+"/file2")
 
-      system("#{unzip_path} #{file1} -d #{tmpdir}/file1")
-      system("#{unzip_path} #{file2} -d #{tmpdir}/file2")
-      system("#{diff_path} -r #{tmpdir}/file1 #{tmpdir}/file2")
+      %x(#{unzip_path} #{file1} -d #{tmpdir}/file1)
+      %x(#{unzip_path} #{file2} -d #{tmpdir}/file2)
+      system("#{diff_path} -r -u #{tmpdir}/file1 #{tmpdir}/file2")
 
     rescue => e
       warn e
