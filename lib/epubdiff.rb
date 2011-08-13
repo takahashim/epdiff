@@ -8,7 +8,7 @@ module Epubdiff
 
   def execute(*args)
 
-    tmpdir = Dir.tmpdir
+    tmpdir = Dir.mktmpdir
     diff_path = "diff"
     unzip_path = "unzip"
 
