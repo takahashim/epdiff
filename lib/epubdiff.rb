@@ -1,6 +1,6 @@
 require "epubdiff/version"
 
-class Epubdiff
+module Epubdiff
   extend self
 
   def execute(*args)
