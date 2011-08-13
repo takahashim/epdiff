@@ -1,5 +1,7 @@
 require "epubdiff/version"
+require 'optparse'
 require 'tmpdir'
+require 'fileutils'
 
 module Epubdiff
   extend self
