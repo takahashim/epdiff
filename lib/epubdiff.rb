@@ -49,7 +49,10 @@ module Epubdiff
 
       %x(#{unzip_path} #{file1} -d #{tmpdir}/file1)
       %x(#{unzip_path} #{file2} -d #{tmpdir}/file2)
-      system("#{diff_path} -r -u #{tmpdir}/file1 #{tmpdir}/file2")
+      p Regexp.escape(tmpdir)
+      IO.popen("#{diff_path} -r -u #{tmpdir}/file1 #{tmpdir}/file2") do |io|
+        print io.read.gsub(Regexp.escape(tmpdir), "")
+      end
 
     rescue => e
       warn e
