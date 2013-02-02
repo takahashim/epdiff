@@ -1,0 +1,2 @@
+require 'epdiff'
+Epdiff.execute(*ARGV)

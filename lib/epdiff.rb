@@ -1,9 +1,9 @@
-require "epubdiff/version"
+require "epdiff/version"
 require 'optparse'
 require 'tmpdir'
 require 'fileutils'
 
-module Epubdiff
+module Epdiff
   extend self
 
   def execute(*args)
@@ -13,7 +13,7 @@ module Epubdiff
     unzip_path = "unzip"
 
     opts = OptionParser.new do |opts|
-      opts.banner = "Usage: epubdiff [options] [filename] [filename]\n"
+      opts.banner = "Usage: epdiff [options] [filename] [filename]\n"
 
       opts.on('-t','--tmpdir DIR', 'Set tepmorary directory') do |dir|
         tmpdir = dir
