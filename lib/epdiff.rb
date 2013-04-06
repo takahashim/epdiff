@@ -47,10 +47,10 @@ module Epdiff
       FileUtils.mkdir_p(tmpdir+"/file1")
       FileUtils.mkdir_p(tmpdir+"/file2")
 
-      %x(#{unzip_path} #{file1} -d #{tmpdir}/file1)
-      %x(#{unzip_path} #{file2} -d #{tmpdir}/file2)
+      %x("#{unzip_path}" "#{file1}" -d "#{tmpdir}/file1")
+      %x("#{unzip_path}" "#{file2}" -d "#{tmpdir}/file2")
 
-      IO.popen("#{diff_path} -r -u #{tmpdir}/file1 #{tmpdir}/file2") do |io|
+      IO.popen("'#{diff_path}' -r -u '#{tmpdir}/file1' '#{tmpdir}/file2'") do |io|
         print io.read.gsub(/#{Regexp.escape(tmpdir)}/, "")
       end
 
