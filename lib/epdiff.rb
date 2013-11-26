@@ -9,11 +9,15 @@ module Epdiff
 
   def unzip(filename, dir)
     Zip::InputStream.open(filename) do |zio|
-      while (entry = zio.get_next_entry)
+      while entry = zio.get_next_entry
         entry_filename = File.join(dir, entry.name)
-        FileUtils.mkdir_p File.dirname(entry_filename)
-        File.open(entry_filename, "wb") do |f|
-          f.write zio.read
+        if  entry.name_is_directory?
+          FileUtils.mkdir_p File.dirname(entry_filename)
+        elsif entry.file?
+          FileUtils.mkdir_p File.dirname(entry_filename)
+          File.open(entry_filename, "wb") do |f|
+            f.write zio.read
+          end
         end
       end
     end
