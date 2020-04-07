@@ -11,11 +11,9 @@ Gem::Specification.new do |s|
   s.summary     = %q{diff command for EPUB files.}
   s.description = %q{diff command for EPUB files.}
 
-  s.rubyforge_project = "epdiff"
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-  s.add_runtime_dependency "rubyzip", "~> 1.1.0"
+  s.add_runtime_dependency "rubyzip", "~> 2.3.0"
 end
