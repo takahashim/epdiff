@@ -1,10 +1,10 @@
 # epdiff
 
-epdiff is diff tool for EPUB files.
+`epdiff` is a CLI tool to show diff of EPUB files.
 
 ## usage
 
-  $ epdiff <file1> <file2>
+    $ epdiff <file1> <file2>
 
 'file1' and 'file2' are EPUB files.
 
