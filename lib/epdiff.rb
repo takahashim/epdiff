@@ -50,9 +50,11 @@ class Epdiff
         end
       end
       (files1_s - files2_s).each do |diff1|
+        @exit_code = 1
         print @red.call("DIFF: #{diff1} only exists in 1st.\n")
       end
       (files2_s - files1_s).each do |diff2|
+        @exit_code = 1
         print @green.call("DIFF: #{diff2} only exists in 2nd.\n")
       end
     end
@@ -69,7 +71,8 @@ class Epdiff
 
   def text_diff(_path, path1, path2)
     diff = TTY::File.diff(path1, path2, verbose: false)
-    if diff != "No differences found\n"
+    if diff != "No differences found\n" && diff.strip != ""
+      @exit_code = 1
       print diff
     end
   end
@@ -78,6 +81,7 @@ class Epdiff
     content1 = File.binread(path1)
     content2 = File.binread(path2)
     if content1 != content2
+      @exit_code = 1
       print @cyan.call("DIFF: #{path} has some differences.\n")
     end
   end
@@ -146,6 +150,9 @@ class Epdiff
         show_diff(file1, file2, work_dir)
       end
 
+      @exit_code = 0
+      show_diff(file1, file2, work_dir)
+      exit(@exit_code)
     rescue => e
       warn e
       puts opts
