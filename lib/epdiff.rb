@@ -3,30 +3,89 @@ require 'optparse'
 require 'tmpdir'
 require 'fileutils'
 require 'zip'
+require 'pastel'
+require 'tty/file'
 
-module Epdiff
-  extend self
+
+class Epdiff
+  TEXT_EXT = %w(xhtml html xml opf css txt)
+
+  def self.execute(*args)
+    new.execute(*args)
+  end
+
+  def initialize
+    @pastel = Pastel.new(enabled: true)
+    @green = @pastel.green.detach
+    @red = @pastel.red.detach
+    @cyan = @pastel.cyan.detach
+  end
 
   def unzip(filename, dir)
     Zip::InputStream.open(filename) do |zio|
       while entry = zio.get_next_entry
-        entry_filename = File.join(dir, entry.name)
-        if  entry.name_is_directory?
+        if  entry.file?
+          entry_filename = File.join(dir, entry.name)
           FileUtils.mkdir_p File.dirname(entry_filename)
-        elsif entry.file?
-          FileUtils.mkdir_p File.dirname(entry_filename)
-          File.open(entry_filename, "wb") do |f|
-            f.write zio.read
-          end
+          File.binwrite(entry_filename, zio.read)
         end
       end
     end
   end
 
+  def show_diff(file1, file2, work_dir)
+    Dir.chdir(work_dir) do
+      files1 = Dir.glob("file1/**/*")
+      files2 = Dir.glob("file2/**/*")
+      files1_s = files1.map{|d| d.sub(%r{^file1/}, '')}
+      files2_s = files2.map{|d| d.sub(%r{^file2/}, '')}
+      files_common = files1_s & files2_s
+      files_common.each do |path|
+        if File.file?("file1/#{path}")
+          if text_file?("file1/#{path}")
+            text_diff(path, "file1/#{path}", "file2/#{path}")
+          else
+            binary_diff(path, "file1/#{path}", "file2/#{path}")
+          end
+        end
+      end
+      (files1_s - files2_s).each do |diff1|
+        print @red.call("DIFF: #{diff1} only exists in 1st.\n")
+      end
+      (files2_s - files1_s).each do |diff2|
+        print @green.call("DIFF: #{diff2} only exists in 2nd.\n")
+      end
+    end
+  end
+
+  def text_file?(path)
+    extname = File.extname(path).sub(/\A\./, '')
+    if TEXT_EXT.include?(extname)
+      extname
+    else
+      nil
+    end
+  end
+
+  def text_diff(_path, path1, path2)
+    diff = TTY::File.diff(path1, path2, verbose: false)
+    if diff != "No differences found\n"
+      print diff
+    end
+  end
+
+  def binary_diff(path, path1, path2)
+    content1 = File.binread(path1)
+    content2 = File.binread(path2)
+    if content1 != content2
+      print @cyan.call("DIFF: #{path} has some differences.\n")
+    end
+  end
+
   def execute(*args)
 
-    tmpdir = Dir.mktmpdir
-    diff_path = "diff"
+    tmpdir = work_dir = nil
+    diff_path = nil
     unzip_path = nil
 
     opts = OptionParser.new do |opts|
@@ -65,25 +124,35 @@ module Epdiff
         exit
       end
 
+      work_dir = tmpdir || Dir.mktmpdir
+
       file1, file2 = *args
-      FileUtils.mkdir_p(tmpdir+"/file1")
-      FileUtils.mkdir_p(tmpdir+"/file2")
+      FileUtils.mkdir_p(work_dir+"/file1")
+      FileUtils.mkdir_p(work_dir+"/file2")
 
       if unzip_path
-        %x("#{unzip_path}" "#{file1}" -d "#{tmpdir}/file1")
-        %x("#{unzip_path}" "#{file2}" -d "#{tmpdir}/file2")
+        %x("#{unzip_path}" "#{file1}" -d "#{work_dir}/file1")
+        %x("#{unzip_path}" "#{file2}" -d "#{work_dir}/file2")
       else
-        unzip(file1, "#{tmpdir}/file1")
-        unzip(file2, "#{tmpdir}/file2")
+        unzip(file1, "#{work_dir}/file1")
+        unzip(file2, "#{work_dir}/file2")
       end
 
-      IO.popen("'#{diff_path}' -r -u '#{tmpdir}/file1' '#{tmpdir}/file2'") do |io|
-        print io.read.gsub(/#{Regexp.escape(tmpdir)}/, "")
+      if diff_path
+        IO.popen("'#{diff_path}' -r -u '#{work_dir}/file1' '#{work_dir}/file2'") do |io|
+          print io.read.gsub(/#{Regexp.escape(work_dir)}/, "")
+        end
+      else
+        show_diff(file1, file2, work_dir)
       end
 
     rescue => e
       warn e
       puts opts
+    ensure
+      if work_dir && !tmpdir
+        FileUtils.rm_rf(work_dir)
+      end
     end
   end
 
