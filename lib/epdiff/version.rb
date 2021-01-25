@@ -1,3 +1,3 @@
-module Epdiff
-  VERSION = "1.0.3"
+class Epdiff
+  VERSION = "2.0.0.rc1"
 end
