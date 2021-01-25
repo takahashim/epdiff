@@ -1,18 +1,17 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'epdiff'
 
 class EpdiffTest < Test::Unit::TestCase
-  def setup
-  end
+  def setup; end
 
-  def teardown
-  end
+  def teardown; end
 
   def test_ezpdiff_execute_color
-    out = STDOUT
+    out = $stdout
     $stdout = StringIO.new
     begin
-
       Epdiff.new.execute(File.join(fixtures_dir, 'book_orig.epub'),
                          File.join(fixtures_dir, 'book_image.epub'))
       result = $stdout.string
@@ -24,10 +23,9 @@ class EpdiffTest < Test::Unit::TestCase
   end
 
   def test_ezpdiff_execute_nocolor
-    out = STDOUT
+    out = $stdout
     $stdout = StringIO.new
     begin
-
       Epdiff.new.execute('-C',
                          File.join(fixtures_dir, 'book_orig.epub'),
                          File.join(fixtures_dir, 'book_image.epub'))

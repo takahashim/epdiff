@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'epdiff'
 exit_code = Epdiff.execute(*ARGV)

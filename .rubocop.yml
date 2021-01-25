@@ -1,0 +1,30 @@
+# inherit_from: .rubocop_todo.yml
+AllCops:
+  NewCops: enable
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/ClassLength:
+  CountComments: false
+  Max: 117
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/MethodLength:
+  CountComments: false
+  Max: 40
+
+Metrics/PerceivedComplexity:
+  Max: 20
+
+Style/Documentation:
+  Exclude:
+    - 'test/**/*'
+
+Layout/LineLength:
+  Max: 120
