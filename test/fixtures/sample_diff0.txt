@@ -1,0 +1,22 @@
+--- file1/OEBPS/book.opf
++++ file2/OEBPS/book.opf
+[36m@@ -17,6 +17,7 @@[0m
+     <item id="style-css" href="style.css" media-type="text/css"/>
+     <item id="titlepage-xhtml" href="titlepage.xhtml" media-type="application/xhtml+xml"/>
+     <item id="test1-xhtml" href="test1.xhtml" media-type="application/xhtml+xml"/>
+[32m+    <item id="images-Hokusai_Setsubun_no_Oni-jpg" href="images/Hokusai_Setsubun_no_Oni.jpg" media-type="image/jpeg"/>[0m
+   </manifest>
+   <spine page-progression-direction="ltr">
+     <itemref idref="book" linear="no"/>
+--- file1/OEBPS/test1.xhtml
++++ file2/OEBPS/test1.xhtml
+[36m@@ -9,7 +9,7 @@[0m
+ </head>
+ <body>
+ <h1><a id="h1"></a><span class="secno">第1章　</span>test1</h1>
+[31m-<p>this is a test EPUB file.</p>[0m
+[32m+<p>this is a EPUB file to test <strong>epdiff</strong>.</p>[0m
+ </body>
+ </html>
+[32mDIFF: OEBPS/images/Hokusai_Setsubun_no_Oni.jpg only exists in 2nd.
+[0m

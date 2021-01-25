@@ -93,8 +93,6 @@ class Epdiff
   def execute(*args)
 
     tmpdir = work_dir = nil
-    diff_path = nil
-    unzip_path = nil
 
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: epdiff [options] [filename] [filename]\n"
@@ -139,7 +137,8 @@ class Epdiff
 
       @exit_code = 0
       show_diff(file1, file2, work_dir)
-      exit(@exit_code)
+
+      @exit_code
     rescue => e
       warn e
       puts opts

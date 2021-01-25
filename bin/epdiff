@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
 
 require 'epdiff'
-Epdiff.execute(*ARGV)
+exit_code = Epdiff.execute(*ARGV)
+exit(exit_code)
