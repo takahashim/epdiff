@@ -9,4 +9,12 @@ Rake::TestTask.new(:test) do |t|
   t.test_files = FileList['test/**/test_*.rb']
 end
 
-task default: :test
+desc 'Check with rubocop'
+task :rubocop do
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+rescue LoadError
+  warn 'rubocop not found'
+end
+
+task default: %i[test rubocop]
