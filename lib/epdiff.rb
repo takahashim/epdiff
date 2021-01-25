@@ -19,6 +19,7 @@ class Epdiff
     @green = @pastel.green.detach
     @red = @pastel.red.detach
     @cyan = @pastel.cyan.detach
+    @color = true
   end
 
   def unzip(filename, dir)
@@ -51,11 +52,13 @@ class Epdiff
       end
       (files1_s - files2_s).each do |diff1|
         @exit_code = 1
-        print @red.call("DIFF: #{diff1} only exists in 1st.\n")
+        message = "DIFF: #{diff1} only exists in 1st.\n"
+        print @color ? @red.call(message) : message
       end
       (files2_s - files1_s).each do |diff2|
         @exit_code = 1
-        print @green.call("DIFF: #{diff2} only exists in 2nd.\n")
+        message = "DIFF: #{diff2} only exists in 2nd.\n"
+        print @color ? @green.call(message) : message
       end
     end
   end
@@ -70,7 +73,7 @@ class Epdiff
   end
 
   def text_diff(_path, path1, path2)
-    diff = TTY::File.diff(path1, path2, verbose: false)
+    diff = @color ? TTY::File.diff(path1, path2, verbose: false) : TTY::File.diff(path1, path2, verbose: false, color: nil)
     if diff != "No differences found\n" && diff.strip != ""
       @exit_code = 1
       print diff
@@ -82,7 +85,8 @@ class Epdiff
     content2 = File.binread(path2)
     if content1 != content2
       @exit_code = 1
-      print @cyan.call("DIFF: #{path} has some differences.\n")
+      message = "DIFF: #{path} has some differences.\n"
+      print @color ? @cyan.call(message) : message
     end
   end
 
@@ -102,6 +106,10 @@ class Epdiff
       opts.on('-h', '--help', 'Show this help message') do
         puts opts
         exit
+      end
+
+      opts.on('-C', '--no-color', 'Not use color diff') do
+        @color = false
       end
 
       opts.on('-v', '--version', 'Show version number') do
