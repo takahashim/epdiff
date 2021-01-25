@@ -16,4 +16,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   s.add_runtime_dependency "rubyzip", "~> 2.3.0"
+  s.add_runtime_dependency "pastel"
+  s.add_runtime_dependency "tty-file"
 end
