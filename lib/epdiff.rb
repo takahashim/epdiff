@@ -99,14 +99,6 @@ class Epdiff
         tmpdir = dir
       end
 
-      opts.on('--diff-command PATH', 'Specify diff command path') do |path|
-        diff_path = path
-      end
-
-      opts.on('--unzip-command PATH', 'Specify unzip command path') do |path|
-        unzip_path = path
-      end
-
       opts.on('-h', '--help', 'Show this help message') do
         puts opts
         exit
@@ -134,21 +126,8 @@ class Epdiff
       FileUtils.mkdir_p(work_dir+"/file1")
       FileUtils.mkdir_p(work_dir+"/file2")
 
-      if unzip_path
-        %x("#{unzip_path}" "#{file1}" -d "#{work_dir}/file1")
-        %x("#{unzip_path}" "#{file2}" -d "#{work_dir}/file2")
-      else
-        unzip(file1, "#{work_dir}/file1")
-        unzip(file2, "#{work_dir}/file2")
-      end
-
-      if diff_path
-        IO.popen("'#{diff_path}' -r -u '#{work_dir}/file1' '#{work_dir}/file2'") do |io|
-          print io.read.gsub(/#{Regexp.escape(work_dir)}/, "")
-        end
-      else
-        show_diff(file1, file2, work_dir)
-      end
+      unzip(file1, "#{work_dir}/file1")
+      unzip(file2, "#{work_dir}/file2")
 
       @exit_code = 0
       show_diff(file1, file2, work_dir)
